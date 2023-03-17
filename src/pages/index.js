@@ -58,6 +58,7 @@ export function Index() {
       <div>
         <p>Notes de mise à jour</p>
         <ul>
+          <li>v1.5.0 - 17/03/2023 - Les habillages sont désormais colorés en fonction de leur région d'appartenance</li>
           <li>v1.4.0 - 17/03/2023 - Les liens bijectifs apparaissent désormais en bleu gras</li>
           <li>v1.3.0 - 17/03/2023 - Les menus déroulants sont désormais triés en ordre alphabétique</li>
           <li>v1.2.0 - 17/03/2023 - Les liens bijectifs sont désormais représentés par un seul trait sans flèches</li>

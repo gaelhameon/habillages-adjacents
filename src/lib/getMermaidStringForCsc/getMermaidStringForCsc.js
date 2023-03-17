@@ -3,7 +3,7 @@ export default function getMermaidStringForCsc(csc) {
   const linkByLinkKey = new Map();
   recursivelyVisitCscAndCreateLinks(csc, visitedCscs, linkByLinkKey);
   simplifyBidirectionalLinks(linkByLinkKey);
-  return getMermaidString(linkByLinkKey);
+  return getMermaidString(linkByLinkKey, Array.from(visitedCscs));
 }
 
 
@@ -47,16 +47,32 @@ function simplifyBidirectionalLinks(linkByLinkKey) {
  * 
  * @param {Map} linkByLinkKey 
  */
-function getMermaidString(linkByLinkKey) {
+function getMermaidString(linkByLinkKey, cscs) {
   const links = Array.from(linkByLinkKey.values());
 
-  return `graph TD\n${links.map(({ from, to, isBidirectional }) => {
-    const arrowString = isBidirectional ? '===' : '-->';
-    return `${from.shortKey}[${from.cscKey}] ${arrowString} ${to.shortKey}[${to.cscKey}]`
-  }).join('\n')}\n${getLinkStyleString(links)}`
+  return `graph TD\n${getClassesDefString()}\n${getNodesString(cscs)}\n${getLinksString(links)}\n${getLinkStyleString(links)}`
+}
+
+function getNodesString(cscs) {
+  return cscs.map((csc) => {
+    return `${csc.shortKey}[${csc.cscKey}]:::${getClassNameOfCsc(csc)}`
+  }).join('\n')
+}
+
+function getLinksString(links) {
+  return links.map(({ from, to, isBidirectional }) => {
+    const arrowString = isBidirectional ? '---' : '-->';
+    return `${from.shortKey} ${arrowString} ${to.shortKey}`
+  }).join('\n');
+}
+
+function getClassNameOfCsc(csc) {
+  const letter = csc.cscBooking.slice(0, 1);
+  return classStyleByClassName[letter] ? letter : 'Z';
 }
 
 function getLinkStyleString(links) {
+  if (links.length === 0) return '';
   const singleLinkIndexes = [];
   const biDirLinkIndexes = [];
   links.forEach((link, index) => {
@@ -69,4 +85,25 @@ function getLinkStyleString(links) {
   });
   return `linkStyle ${singleLinkIndexes} stroke-width:3px,stroke:#000000,color:black;;\n` +
     `linkStyle ${biDirLinkIndexes} stroke-width:4px,stroke:#022992,color:black;`
+}
+
+const classStyleByClassName = {
+  B: `fill:#e6194B,color:#FFFFFF,stroke:none;`,
+  C: `fill:#3cb44b,color:#FFFFFF,stroke:none;`,
+  D: `fill:#ffe119,color:#000000,stroke:none;`,
+  F: `fill:#4363d8,color:#FFFFFF,stroke:none;`,
+  G: `fill:#f58231,color:#FFFFFF,stroke:none;`,
+  J: `fill:#911eb4,color:#FFFFFF,stroke:none;`,
+  K: `fill:#42d4f4,color:#000000,stroke:none;`,
+  L: `fill:#f032e6,color:#FFFFFF,stroke:none;`,
+  M: `fill:#bfef45,color:#000000,stroke:none;`,
+  R: `fill:#fabed4,color:#000000,stroke:none;`,
+  S: `fill:#469990,color:#FFFFFF,stroke:none;`,
+  T: `fill:#dcbeff,color:#000000,stroke:none;`,
+  U: `fill:#9A6324,color:#FFFFFF,stroke:none;`,
+  Z: `fill:#000000,color:#FFFFFF,stroke:none;`
+};
+
+function getClassesDefString() {
+  return Object.entries(classStyleByClassName).map(([className, classStyle,]) => `classDef ${className} ${classStyle}`).join('\n');
 }
