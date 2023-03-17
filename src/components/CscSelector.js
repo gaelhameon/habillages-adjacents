@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
 const CscSelector = ({ currentCscKey, data, setCurrentCscKey }) => {
-  const { bookings, names, scenarios, schedTypes, cscByCscKey } = data;
+  const { cscByCscKey, scenariosBySchedTypeByNameByBooking } = data;
   const firstCsc = Object.values(cscByCscKey)[0];
+  const bookings = Object.keys(scenariosBySchedTypeByNameByBooking);
   const [valueByKeyPart, setValueByKeyPart] = useState({
     booking: firstCsc.cscBooking,
     name: firstCsc.cscName,
@@ -12,8 +13,23 @@ const CscSelector = ({ currentCscKey, data, setCurrentCscKey }) => {
   const {
     booking, name, scenario, schedType
   } = valueByKeyPart;
+
+
+  const scenariosBySchedTypeByName = scenariosBySchedTypeByNameByBooking[booking];
+  const names = Object.keys(scenariosBySchedTypeByName);
+
+  const scenariosBySchedType = scenariosBySchedTypeByName[name];
+  const schedTypes = Object.keys(scenariosBySchedType);
+
+  const scenarios = scenariosBySchedType[schedType];
+
   const handleChange = (keyPart, newValue) => {
-    const newValueByKeyPart = ({ ...valueByKeyPart, [keyPart]: newValue });
+    const requestedNewValueByKeyPart = ({ ...valueByKeyPart, [keyPart]: newValue });
+    const newValueByKeyPart = computeNewValueByKeyPartForRequestedValueByKeyPart(
+      requestedNewValueByKeyPart,
+      scenariosBySchedTypeByNameByBooking,
+    );
+
     setValueByKeyPart(newValueByKeyPart);
     setCurrentCscKey(`${newValueByKeyPart.booking}-${newValueByKeyPart.name}-${newValueByKeyPart.schedType}-${newValueByKeyPart.scenario}`)
   }
@@ -48,5 +64,32 @@ const CscKeyPartSelect = ({ choices, id, onChange, value }) => {
 }
 
 
+function computeNewValueByKeyPartForRequestedValueByKeyPart(requestedNewValueByKeyPart, scenariosBySchedTypeByNameByBooking) {
+  let { booking, name, schedType, scenario } = requestedNewValueByKeyPart;
+  const scenariosBySchedTypeByName = scenariosBySchedTypeByNameByBooking[booking];
+
+  let scenariosBySchedType = scenariosBySchedTypeByName[name];
+  if (!scenariosBySchedType) {
+    name = Object.keys(scenariosBySchedTypeByName)[0];
+    scenariosBySchedType = scenariosBySchedTypeByName[name];
+  }
+
+  let scenarios = scenariosBySchedType[schedType];
+  if (!scenarios) {
+    schedType = Object.keys(scenariosBySchedType)[0];
+    scenarios = scenariosBySchedType[schedType];
+  }
+
+  if (!scenarios.includes(scenario)) {
+    scenario = scenarios[0];
+  }
+
+  return {
+    booking,
+    name,
+    schedType,
+    scenario,
+  }
+}
 
 export default CscSelector;
