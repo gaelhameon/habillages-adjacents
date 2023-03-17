@@ -58,6 +58,7 @@ export function Index() {
       <div>
         <p>Notes de mise à jour</p>
         <ul>
+          <li>v1.7.0 - 17/03/2023 - L'unité horaire et le contexte de service, ainsi que la date d'enregistrement et l'utilisateur sont désormais affichés</li>
           <li>v1.6.0 - 17/03/2023 - Une légende est désormais affichée</li>
           <li>v1.5.0 - 17/03/2023 - Les habillages sont désormais colorés en fonction de leur région d'appartenance</li>
           <li>v1.4.0 - 17/03/2023 - Les liens bijectifs apparaissent désormais en bleu gras</li>

@@ -61,7 +61,9 @@ ${getLinkStyleString(links)}
 
 function getNodesString(cscs) {
   return cscs.map((csc) => {
-    return `${csc.shortKey}[${csc.cscKey}]:::${getClassNameOfCsc(csc)}`
+    return `${csc.shortKey}[${csc.cscKey}<br>`
+      + `${csc.cscSchedUnit} ${csc.cscServiceCtxId ? ` _________ ${csc.cscServiceCtxId}` : ''}<br>`
+      + `${csc.cscDatetimeStamp.replace(/;.*$/, '')} ${csc.cscUserStamp}]:::${getClassNameOfCsc(csc)}`
   }).join('\n')
 }
 
@@ -90,7 +92,7 @@ function getLinkStyleString(links) {
     }
   });
   return `linkStyle ${singleLinkIndexes} stroke-width:3px,stroke:#000000,color:black;\n` +
-    `linkStyle ${biDirLinkIndexes} stroke-width:4px,stroke:#022992,color:black;\n` +
+    `linkStyle ${biDirLinkIndexes} stroke-width:6px,stroke:#022992,color:black;\n` +
     `linkStyle default stroke-width:0px`
 }
 
