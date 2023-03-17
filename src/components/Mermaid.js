@@ -11,7 +11,7 @@ const DEFAULT_CONFIG = {
     curve: 'basis',
     rankSpacing: 30,
     nodeSpacing: 30,
-    diagramPadding: 50,
+    diagramPadding: 5,
     useMaxWidth: true,
   },
 };

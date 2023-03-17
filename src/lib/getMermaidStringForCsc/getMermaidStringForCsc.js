@@ -48,8 +48,25 @@ function simplifyBidirectionalLinks(linkByLinkKey) {
  * @param {Map} linkByLinkKey 
  */
 function getMermaidString(linkByLinkKey) {
-  return `graph TD\n${Array.from(linkByLinkKey.values()).map(({ from, to, isBidirectional }) => {
-    const arrowString = isBidirectional ? '---' : '-->';
+  const links = Array.from(linkByLinkKey.values());
+
+  return `graph TD\n${links.map(({ from, to, isBidirectional }) => {
+    const arrowString = isBidirectional ? '===' : '-->';
     return `${from.shortKey}[${from.cscKey}] ${arrowString} ${to.shortKey}[${to.cscKey}]`
-  }).join('\n')}`
+  }).join('\n')}\n${getLinkStyleString(links)}`
+}
+
+function getLinkStyleString(links) {
+  const singleLinkIndexes = [];
+  const biDirLinkIndexes = [];
+  links.forEach((link, index) => {
+    if (link.isBidirectional) {
+      biDirLinkIndexes.push(index);
+    }
+    else {
+      singleLinkIndexes.push(index);
+    }
+  });
+  return `linkStyle ${singleLinkIndexes} stroke-width:3px,stroke:#000000,color:black;;\n` +
+    `linkStyle ${biDirLinkIndexes} stroke-width:4px,stroke:#022992,color:black;`
 }
