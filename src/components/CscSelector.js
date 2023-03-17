@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
+// TODO: faire les sort dans le parseAndClean pour ne pas refaire à chaque fois ...
 const CscSelector = ({ currentCscKey, data, setCurrentCscKey }) => {
   const { cscByCscKey, scenariosBySchedTypeByNameByBooking } = data;
   const firstCsc = Object.values(cscByCscKey)[0];
-  const bookings = Object.keys(scenariosBySchedTypeByNameByBooking);
+  const bookings = Object.keys(scenariosBySchedTypeByNameByBooking).sort();
   const [valueByKeyPart, setValueByKeyPart] = useState({
     booking: firstCsc.cscBooking,
     name: firstCsc.cscName,
@@ -16,12 +17,12 @@ const CscSelector = ({ currentCscKey, data, setCurrentCscKey }) => {
 
 
   const scenariosBySchedTypeByName = scenariosBySchedTypeByNameByBooking[booking];
-  const names = Object.keys(scenariosBySchedTypeByName);
+  const names = Object.keys(scenariosBySchedTypeByName).sort();
 
   const scenariosBySchedType = scenariosBySchedTypeByName[name];
-  const schedTypes = Object.keys(scenariosBySchedType);
+  const schedTypes = Object.keys(scenariosBySchedType).sort();
 
-  const scenarios = scenariosBySchedType[schedType];
+  const scenarios = scenariosBySchedType[schedType].sort();
 
   const handleChange = (keyPart, newValue) => {
     const requestedNewValueByKeyPart = ({ ...valueByKeyPart, [keyPart]: newValue });
