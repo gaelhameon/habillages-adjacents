@@ -27,7 +27,8 @@ const CscSelector = ({ currentCscKey, data, setCurrentCscKey }) => {
       <CscKeyPartSelect id="schedTypes" choices={schedTypes} value={schedType} onChange={(v) => handleChange('schedType', v)} />
       <CscKeyPartSelect id="scenarios" choices={scenarios} value={scenario} onChange={(v) => handleChange('scenario', v)} />
 
-      <input type="text" id="cscKey" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 w-1/3 focus:border-blue-500 p-2.5"
+      <input type="text" id="cscKey"
+        size={50}
         value={currentCscKey}
         onChange={({ target }) => setCurrentCscKey(target.value)}
       />
