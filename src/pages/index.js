@@ -49,11 +49,19 @@ export function Index() {
           >
             Actualiser le graphique
           </button>
+          {/* <pre>{mermaidString}</pre> */}
           <Mermaid chart={mermaidString} name="liens" config={{}} />
         </div>
       ) : (
         <OirDataFilesPicker handleData={handleData} />
       )}
+      <div>
+        <p>Notes de mise à jour</p>
+        <ul>
+          <li>v1.2.0 - 17/03/2023 - Les liens bijectifs sont désormais représentés par un seul trait sans flèches</li>
+          <li>v1.1.0 - 17/03/2023 - Les menus déroulants n'affichent désormais que des valeurs valides</li>
+        </ul>
+      </div>
     </div>
   );
 }
