@@ -50,7 +50,13 @@ function simplifyBidirectionalLinks(linkByLinkKey) {
 function getMermaidString(linkByLinkKey, cscs) {
   const links = Array.from(linkByLinkKey.values());
 
-  return `graph TD\n${getClassesDefString()}\n${getNodesString(cscs)}\n${getLinksString(links)}\n${getLinkStyleString(links)}`
+  return `graph TD
+${classesDefString}
+${getNodesString(cscs)}
+${getLinksString(links)}
+${legendString}
+${getLinkStyleString(links)}
+`
 }
 
 function getNodesString(cscs) {
@@ -83,8 +89,9 @@ function getLinkStyleString(links) {
       singleLinkIndexes.push(index);
     }
   });
-  return `linkStyle ${singleLinkIndexes} stroke-width:3px,stroke:#000000,color:black;;\n` +
-    `linkStyle ${biDirLinkIndexes} stroke-width:4px,stroke:#022992,color:black;`
+  return `linkStyle ${singleLinkIndexes} stroke-width:3px,stroke:#000000,color:black;\n` +
+    `linkStyle ${biDirLinkIndexes} stroke-width:4px,stroke:#022992,color:black;\n` +
+    `linkStyle default stroke-width:0px`
 }
 
 const classStyleByClassName = {
@@ -104,6 +111,36 @@ const classStyleByClassName = {
   Z: `fill:#000000,color:#FFFFFF,stroke:none;`
 };
 
+const legendTextByClassName = {
+  B: `NAQ`,
+  C: `IC`,
+  D: `BFC`,
+  F: `LEX`,
+  G: `PDL`,
+  J: `BZH`,
+  K: `AURA`,
+  L: `HDF`,
+  M: `SUD`,
+  R: `NMD`,
+  S: `GE`,
+  T: `OCC`,
+  U: `CVDL`,
+  Z: `Autre`
+}
+
 function getClassesDefString() {
   return Object.entries(classStyleByClassName).map(([className, classStyle,]) => `classDef ${className} ${classStyle}`).join('\n');
 }
+
+const classesDefString = getClassesDefString();
+
+function getLegendString() {
+  return Object.entries(legendTextByClassName).map(([className, legendText]) => `${legendText}[${legendText}]:::${className}`).join('\n') +
+    `
+subgraph Légende
+direction TB
+NAQ---IC---BFC---LEX---GE---OCC---CVDL
+PDL---BZH---AURA---HDF---SUD---NMD---Autre
+end`
+}
+const legendString = getLegendString();
