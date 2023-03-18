@@ -3,7 +3,7 @@ import { useState } from 'react';
 import OirDataFilesPicker from '../components/OirDataFilesPicker';
 import CscSelector from '../components/CscSelector';
 import { parseAndCleanData } from '../lib/parseAndCleanData';
-import getMermaidStringForCsc from '../lib/getMermaidStringForCsc/getMermaidStringForCsc';
+import getMermaidStringForCsc from '../lib/getMermaidStringForCsc';
 import Mermaid from '../components/Mermaid';
 
 export function Index() {
