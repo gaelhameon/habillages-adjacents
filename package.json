@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@inovua/reactdatagrid-community": "^5.8.5",
     "mermaid": "^8",
     "next": "13.2.4",
     "react": "18.2.0",
