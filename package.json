@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@babel/runtime": "^7.21.0",
     "@inovua/reactdatagrid-community": "^5.8.5",
     "mermaid": "^8",
     "next": "13.2.4",

@@ -5,6 +5,7 @@ import CscSelector from '../components/CscSelector';
 import { parseAndCleanData } from '../lib/parseAndCleanData';
 import getMermaidStringForCsc from '../lib/getMermaidStringForCsc';
 import Mermaid from '../components/Mermaid';
+import CscDataGrid from '@/components/CscDataGrid';
 
 export function Index() {
   const [cleanData, setCleanData] = useState({});
@@ -51,6 +52,7 @@ export function Index() {
           </button>
           {/* <pre>{mermaidString}</pre> */}
           <Mermaid chart={mermaidString} name="liens" config={{}} />
+          <CscDataGrid cscByCscKey={cscByCscKey} />
         </div>
       ) : (
         <OirDataFilesPicker handleData={handleData} />
@@ -58,6 +60,7 @@ export function Index() {
       <div>
         <p>Notes de mise à jour</p>
         <ul>
+          <li>v1.8.0 - 18/03/2023 - Un tableau affiche les habillages et certaines statistiques</li>
           <li>v1.7.0 - 17/03/2023 - L'unité horaire et le contexte de service, ainsi que la date d'enregistrement et l'utilisateur sont désormais affichés</li>
           <li>v1.6.0 - 17/03/2023 - Une légende est désormais affichée</li>
           <li>v1.5.0 - 17/03/2023 - Les habillages sont désormais colorés en fonction de leur région d'appartenance</li>

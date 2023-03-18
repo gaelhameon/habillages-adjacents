@@ -35,7 +35,7 @@ function getNodesString(cscs) {
   return cscs.map((csc) => {
     return `${csc.shortKey}[${csc.cscKey}<br>`
       + `${csc.cscSchedUnit} ${csc.cscServiceCtxId ? ` _________ ${csc.cscServiceCtxId}` : ''}<br>`
-      + `${csc.cscDatetimeStamp.replace(/;.*$/, '')} ${csc.cscUserStamp}]:::${getClassNameOfCsc(csc)}`
+      + `${csc.dateAsDate.toLocaleDateString()} ${csc.dateAsDate.toLocaleTimeString()} ${csc.cscUserStamp}]:::${getClassNameOfCsc(csc)}`
   }).join('\n')
 }
 

@@ -20,12 +20,19 @@ export async function parseAndCleanData(data) {
   const scenariosBySchedTypeByNameByBooking = {};
 
 
+  const dateTimeMatcher = /^(\d\d)\/(\d\d)\/(\d{4}) +(\d\d?):(\d\d)(?:;(\d\d)\.\d)?$/
   let shortKey = 1;
   parent.forEach((parentCsc) => {
     const cscKey = getKeyFromRawCsc(parentCsc);
     fillScenariosBySchedTypeByNameByBooking(scenariosBySchedTypeByNameByBooking, parentCsc);
     parentCsc.cscKey = cscKey;
     parentCsc.shortKey = shortKey;
+
+    const match = dateTimeMatcher.exec(parentCsc.cscDatetimeStamp);
+    if (!match) throw new Error(`Mauvais format de date: ${parentCsc.cscDatetimeStamp}`);
+    const [_, day, month, year, hours, minutes, seconds = 0] = match;
+    parentCsc.dateAsDate = new Date(`${year}-${month}-${day} ${hours}:${minutes}:${seconds}`);
+    parentCsc.dateAsIsoString = parentCsc.dateAsDate.toISOString();
     shortKey += 1;
     uniqueCscObjectByCscKey[cscKey] = parentCsc;
   });
