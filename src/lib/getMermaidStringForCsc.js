@@ -63,9 +63,12 @@ function getLinkStyleString(links) {
       singleLinkIndexes.push(index);
     }
   });
-  return `linkStyle ${singleLinkIndexes} stroke-width:3px,stroke:#000000,color:black;\n` +
-    `linkStyle ${biDirLinkIndexes} stroke-width:6px,stroke:#022992,color:black;\n` +
+  const linkStyleLines = [
+    (singleLinkIndexes.length === 0 ? false : `linkStyle ${singleLinkIndexes} stroke-width:3px,stroke:#000000,color:black;`),
+    (biDirLinkIndexes.length === 0 ? false : `linkStyle ${biDirLinkIndexes} stroke-width:6px,stroke:#022992,color:black;`),
     `linkStyle default stroke-width:0px`
+  ]
+  return linkStyleLines.filter(Boolean).join('\n');
 }
 
 const classStyleByClassName = {

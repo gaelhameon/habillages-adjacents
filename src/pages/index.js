@@ -58,6 +58,7 @@ export function Index() {
       <div style={{ fontFamily: 'sans-serif' }}>
         <p>Notes de mise à jour</p>
         <ul>
+          <li>v1.9.1 - 20/03/2023 - Un bug concernant les habillages dont tous les liens sont bijectifs a été corrigé</li>
           <li>v1.9.0 - 18/03/2023 - Des filtres de base ont été ajoutés au tableau. Un clic sur une ligne du tableau affiche le graphique correspondant</li>
           <li>v1.8.0 - 18/03/2023 - Un tableau affiche les habillages et certaines statistiques</li>
           <li>v1.7.0 - 17/03/2023 - L'unité horaire et le contexte de service, ainsi que la date d'enregistrement et l'utilisateur sont désormais affichés</li>
