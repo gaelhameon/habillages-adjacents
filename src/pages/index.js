@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import OirDataFilesPicker from '../components/OirDataFilesPicker';
+import FilesPicker from '../components/FilesPicker';
 import CscSelector from '../components/CscSelector';
 import { parseAndCleanData } from '../lib/parseAndCleanData';
 import getMermaidStringForCsc from '../lib/getMermaidStringForCsc';
@@ -53,7 +53,7 @@ export function Index() {
           <CscDataGrid cscByCscKey={cscByCscKey} handleDataGridRowClick={refreshMermaidString} />
         </div>
       ) : (
-        <OirDataFilesPicker handleData={handleData} />
+        <FilesPicker handleData={handleData} />
       )}
       <div style={{ fontFamily: 'sans-serif' }}>
         <p>Notes de mise à jour</p>
