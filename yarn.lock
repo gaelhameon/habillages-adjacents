@@ -174,6 +174,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@zip.js/zip.js@npm:^2.6.81":
+  version: 2.6.81
+  resolution: "@zip.js/zip.js@npm:2.6.81"
+  checksum: fbb4bfec6b432a5e6ff7f298b3bbe31115ed1f46b8fb8426b4eb212f72c6f24984e0617fd7d4e6654a3d24141638ead3d781ad7ab49302db4c14a53345aee751
+  languageName: node
+  linkType: hard
+
 "attr-accept@npm:^2.2.2":
   version: 2.2.2
   resolution: "attr-accept@npm:2.2.2"
@@ -925,6 +932,7 @@ __metadata:
   dependencies:
     "@babel/runtime": ^7.21.0
     "@inovua/reactdatagrid-community": ^5.8.5
+    "@zip.js/zip.js": ^2.6.81
     mermaid: ^8
     next: 13.2.4
     react: 18.2.0

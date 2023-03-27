@@ -58,6 +58,7 @@ export function Index() {
       <div style={{ fontFamily: 'sans-serif' }}>
         <p>Notes de mise à jour</p>
         <ul>
+          <li>v1.10.0 - 27/03/2023 - On peut désormais charger les données directement à partir d'un fichier zip (contenant un oir et un fichier de données)</li>
           <li>v1.9.1 - 20/03/2023 - Un bug concernant les habillages dont tous les liens sont bijectifs a été corrigé</li>
           <li>v1.9.0 - 18/03/2023 - Des filtres de base ont été ajoutés au tableau. Un clic sur une ligne du tableau affiche le graphique correspondant</li>
           <li>v1.8.0 - 18/03/2023 - Un tableau affiche les habillages et certaines statistiques</li>
