@@ -2,24 +2,24 @@ import { useState } from 'react';
 
 import FilesPicker from '../components/FilesPicker';
 import CscSelector from '../components/CscSelector';
-import { parseAndCleanData } from '../lib/parseAndCleanData';
+import { parseAndCleanCscData } from '../lib/parseAndCleanCscData';
 import getMermaidStringForCsc from '../lib/getMermaidStringForCsc';
 import Mermaid from '../components/Mermaid';
 import CscDataGrid from '@/components/CscDataGrid';
 
 export function Index() {
-  const [cleanData, setCleanData] = useState({});
+  const [cleanCscData, setCleanCscData] = useState({});
   const [currentCscKey, setCurrentCscKey] = useState('');
   const [mermaidString, setMermaidString] = useState('graph TD\nA--->B');
 
-  const handleData = async (data) => {
-    const cleanData = await parseAndCleanData(data);
-    setCleanData(cleanData);
+  const handleCscData = async (data) => {
+    const cleanData = await parseAndCleanCscData(data);
+    setCleanCscData(cleanData);
   };
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore
-  const { cscByCscKey } = cleanData;
+  const { cscByCscKey } = cleanCscData;
 
   const refreshMermaidString = (cscKey) => {
     const csc = cscByCscKey[cscKey];
@@ -40,7 +40,7 @@ export function Index() {
           <CscSelector
             currentCscKey={currentCscKey}
             setCurrentCscKey={setCurrentCscKey}
-            data={cleanData}
+            data={cleanCscData}
           />{' '}
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -53,7 +53,7 @@ export function Index() {
           <CscDataGrid cscByCscKey={cscByCscKey} handleDataGridRowClick={refreshMermaidString} />
         </div>
       ) : (
-        <FilesPicker handleData={handleData} />
+        <FilesPicker handleData={handleCscData} />
       )}
       <div style={{ fontFamily: 'sans-serif' }}>
         <p>Notes de mise à jour</p>

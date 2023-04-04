@@ -2,7 +2,7 @@ import Parser from "./control-file-and-csv-data-parser";
 import getAndSetIfRequired from "./getAndSetIfRequired";
 
 
-export async function parseAndCleanData(data) {
+export async function parseAndCleanCscData(data) {
   const { newControlFile, newDataFiles } = data;
   const [dataFile] = newDataFiles;
   const oirParser = new Parser(
