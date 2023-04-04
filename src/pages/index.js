@@ -3,12 +3,14 @@ import { useState } from 'react';
 import FilesPicker from '../components/FilesPicker';
 import CscSelector from '../components/CscSelector';
 import { parseAndCleanCscData } from '../lib/parseAndCleanCscData';
+import { parseAndCleanCalData } from '../lib/parseAndCleanCalData';
 import getMermaidStringForCsc from '../lib/getMermaidStringForCsc';
 import Mermaid from '../components/Mermaid';
 import CscDataGrid from '@/components/CscDataGrid';
 
 export function Index() {
   const [cleanCscData, setCleanCscData] = useState({});
+  const [cleanCalData, setCleanCalData] = useState({});
   const [currentCscKey, setCurrentCscKey] = useState('');
   const [mermaidString, setMermaidString] = useState('graph TD\nA--->B');
 
@@ -17,9 +19,15 @@ export function Index() {
     setCleanCscData(cleanData);
   };
 
+  const handleCalData = async (data) => {
+    const cleanData = await parseAndCleanCalData(data);
+    setCleanCalData(cleanData);
+  };
+
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore
   const { cscByCscKey } = cleanCscData;
+  const { schedulingUnitDatesByCscKey } = cleanCalData;
 
   const refreshMermaidString = (cscKey) => {
     const csc = cscByCscKey[cscKey];
@@ -50,14 +58,27 @@ export function Index() {
           </button>
           {/* <pre>{mermaidString}</pre> */}
           <Mermaid chart={mermaidString} name="liens" config={{}} />
-          <CscDataGrid cscByCscKey={cscByCscKey} handleDataGridRowClick={refreshMermaidString} />
+          <CscDataGrid cscByCscKey={cscByCscKey} schedulingUnitDatesByCscKey={schedulingUnitDatesByCscKey} handleDataGridRowClick={refreshMermaidString} />
         </div>
       ) : (
-        <FilesPicker handleData={handleCscData} />
+        <FilesPicker handleData={handleCscData} text={`Habillages: glissez et déposez des fichiers ici, ou cliquez pour sélectionner des fichiers`} />
+      )}
+      {schedulingUnitDatesByCscKey ? (
+        null
+      ) : (
+        <FilesPicker handleData={handleCalData} text={`Calendriers: glissez et déposez des fichiers ici, ou cliquez pour sélectionner des fichiers`} />
       )}
       <div style={{ fontFamily: 'sans-serif' }}>
         <p>Notes de mise à jour</p>
         <ul>
+          <li>v1.11.0 - 04/04/2023 - Plusieurs nouveautés:
+            <ul>
+              <li>On peut désormais charger des données exportées depuis les calendriers pour avoir des statistiques sur la présence des habillages dans les calendriers</li>
+              <li>Des colonnes de statistiques ont été ajoutées</li>
+              <li>L'habillage "principal" du schéma est mis en évidence par une bordure noire</li>
+              <li>Les habillages dont la date d'enregistrement est antérieure au 15/03/2023 sont mis en évidence par une bordure rouge</li>
+            </ul>
+          </li>
           <li>v1.10.0 - 27/03/2023 - On peut désormais charger les données directement à partir d'un fichier zip (contenant un oir et un fichier de données)</li>
           <li>v1.9.1 - 20/03/2023 - Un bug concernant les habillages dont tous les liens sont bijectifs a été corrigé</li>
           <li>v1.9.0 - 18/03/2023 - Des filtres de base ont été ajoutés au tableau. Un clic sur une ligne du tableau affiche le graphique correspondant</li>

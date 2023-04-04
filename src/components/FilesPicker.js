@@ -10,7 +10,7 @@ import { BlobReader, ZipReader, TextWriter } from '@zip.js/zip.js'
  * @param {*} props
  */
 const OirDataFilesPicker = (props) => {
-  const { handleData } = props;
+  const { handleData, text } = props;
 
   const onDrop = useCallback(async (acceptedFiles) => {
     const files = await Promise.all(acceptedFiles.map((file) => new Promise(async (resolve, reject) => {
@@ -43,7 +43,7 @@ const OirDataFilesPicker = (props) => {
 
   return (
     <div className="">
-      <DropZone onDrop={onDrop}></DropZone>
+      <DropZone onDrop={onDrop} text={text}></DropZone>
     </div >
   );
 };

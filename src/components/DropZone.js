@@ -26,7 +26,9 @@ const rejectStyle = { borderColor: '#ff1744' };
 
 const DropZone = (props) => {
   const { getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({ ...props });
-
+  const {
+    text = `Glissez et déposez des fichiers ici, ou cliquez pour sélectionner des fichiers`
+  } = props;
   const style = useMemo(() => ({
     ...baseStyle,
     ...(isDragActive ? activeStyle : {}),
@@ -44,7 +46,7 @@ const DropZone = (props) => {
       {
         isDragActive
           ? <p>Déposez les fichiers ici ...</p>
-          : <p>Glissez et déposez des fichiers ici, ou cliquez pour sélectionner des fichiers</p>
+          : <p>{text}</p>
       }
     </div>
   );

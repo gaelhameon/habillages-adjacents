@@ -5,7 +5,7 @@ export default function getMermaidStringForCsc(csc) {
   if (!csc.linkByLinkKey) {
     createLinksAndComputeStatsForOneCsc(csc);
   }
-  return getMermaidString(csc.linkByLinkKey, Array.from(csc.allAdjacentCscs));
+  return getMermaidString(csc.linkByLinkKey, Array.from(csc.allAdjacentCscs), csc.depthByAdjacentCsc);
 }
 
 
@@ -19,23 +19,26 @@ export default function getMermaidStringForCsc(csc) {
  * 
  * @param {Map} linkByLinkKey 
  */
-function getMermaidString(linkByLinkKey, cscs) {
+function getMermaidString(linkByLinkKey, cscs, depthByAdjacentCsc) {
   const links = Array.from(linkByLinkKey.values());
 
   return `graph TD
 ${classesDefString}
-${getNodesString(cscs)}
+${getNodesString(cscs, depthByAdjacentCsc)}
 ${getLinksString(links)}
 ${legendString}
 ${getLinkStyleString(links)}
 `
 }
 
-function getNodesString(cscs) {
+function getNodesString(cscs, depthByAdjacentCsc) {
   return cscs.map((csc) => {
+    const depth = depthByAdjacentCsc.get(csc) ?? 0;
     return `${csc.shortKey}[${csc.cscKey}<br>`
       + `${csc.cscSchedUnit} ${csc.cscServiceCtxId ? ` _________ ${csc.cscServiceCtxId}` : ''}<br>`
-      + `${csc.dateAsDate.toLocaleDateString()} ${csc.dateAsDate.toLocaleTimeString()} ${csc.cscUserStamp}]:::${getClassNameOfCsc(csc)}`
+      + `${csc.dateAsDate.toLocaleDateString()} ${csc.dateAsDate.toLocaleTimeString()} ${csc.cscUserStamp}<br>`
+      + `Profondeur ${depth}`
+      + `]:::${getClassNameOfCsc(csc, depth === 0)}`
   }).join('\n')
 }
 
@@ -46,9 +49,12 @@ function getLinksString(links) {
   }).join('\n');
 }
 
-function getClassNameOfCsc(csc) {
+function getClassNameOfCsc(csc, isMain) {
   const letter = csc.cscBooking.slice(0, 1);
-  return classStyleByClassName[letter] ? letter : 'Z';
+  const adjustedLetter = classStyleByClassName[letter] ? letter : 'Z';
+  if (isMain) return adjustedLetter + '_main';
+  if (csc.isOld) return adjustedLetter + '_old';
+  return adjustedLetter;
 }
 
 function getLinkStyleString(links) {
@@ -85,7 +91,35 @@ const classStyleByClassName = {
   S: `fill:#469990,color:#FFFFFF,stroke:none;`,
   T: `fill:#dcbeff,color:#000000,stroke:none;`,
   U: `fill:#9A6324,color:#FFFFFF,stroke:none;`,
-  Z: `fill:#000000,color:#FFFFFF,stroke:none;`
+  Z: `fill:#000000,color:#FFFFFF,stroke:none;`,
+  B_old: `fill:#e6194B,color:#FFFFFF,stroke:#FF0000,stroke-width:4px;`,
+  C_old: `fill:#3cb44b,color:#FFFFFF,stroke:#FF0000,stroke-width:4px;`,
+  D_old: `fill:#ffe119,color:#000000,stroke:#FF0000,stroke-width:4px;`,
+  F_old: `fill:#4363d8,color:#FFFFFF,stroke:#FF0000,stroke-width:4px;`,
+  G_old: `fill:#f58231,color:#FFFFFF,stroke:#FF0000,stroke-width:4px;`,
+  J_old: `fill:#911eb4,color:#FFFFFF,stroke:#FF0000,stroke-width:4px;`,
+  K_old: `fill:#42d4f4,color:#000000,stroke:#FF0000,stroke-width:4px;`,
+  L_old: `fill:#f032e6,color:#FFFFFF,stroke:#FF0000,stroke-width:4px;`,
+  M_old: `fill:#bfef45,color:#000000,stroke:#FF0000,stroke-width:4px;`,
+  R_old: `fill:#fabed4,color:#000000,stroke:#FF0000,stroke-width:4px;`,
+  S_old: `fill:#469990,color:#FFFFFF,stroke:#FF0000,stroke-width:4px;`,
+  T_old: `fill:#dcbeff,color:#000000,stroke:#FF0000,stroke-width:4px;`,
+  U_old: `fill:#9A6324,color:#FFFFFF,stroke:#FF0000,stroke-width:4px;`,
+  Z_old: `fill:#000000,color:#FFFFFF,stroke:#FF0000,stroke-width:4px;`,
+  B_main: `fill:#e6194B,color:#FFFFFF,stroke:#000000,stroke-width:9px;`,
+  C_main: `fill:#3cb44b,color:#FFFFFF,stroke:#000000,stroke-width:9px;`,
+  D_main: `fill:#ffe119,color:#000000,stroke:#000000,stroke-width:9px;`,
+  F_main: `fill:#4363d8,color:#FFFFFF,stroke:#000000,stroke-width:9px;`,
+  G_main: `fill:#f58231,color:#FFFFFF,stroke:#000000,stroke-width:9px;`,
+  J_main: `fill:#911eb4,color:#FFFFFF,stroke:#000000,stroke-width:9px;`,
+  K_main: `fill:#42d4f4,color:#000000,stroke:#000000,stroke-width:9px;`,
+  L_main: `fill:#f032e6,color:#FFFFFF,stroke:#000000,stroke-width:9px;`,
+  M_main: `fill:#bfef45,color:#000000,stroke:#000000,stroke-width:9px;`,
+  R_main: `fill:#fabed4,color:#000000,stroke:#000000,stroke-width:9px;`,
+  S_main: `fill:#469990,color:#FFFFFF,stroke:#000000,stroke-width:9px;`,
+  T_main: `fill:#dcbeff,color:#000000,stroke:#000000,stroke-width:9px;`,
+  U_main: `fill:#9A6324,color:#FFFFFF,stroke:#000000,stroke-width:9px;`,
+  Z_main: `fill:#000000,color:#FFFFFF,stroke:#000000,stroke-width:9px;`,
 };
 
 const legendTextByClassName = {

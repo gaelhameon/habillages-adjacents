@@ -16,6 +16,10 @@ const columns = [
   { name: 'dateAsIsoString', header: 'Dateur', defaultFlex: 1, type: 'string' },
   { name: 'firstDegreeAdjacents', header: 'Nb. Adj', defaultFlex: 1, type: 'number' },
   { name: 'totalNumberOfAdjacents', header: 'Nb. Total Adj', defaultFlex: 1, type: 'number' },
+  { name: 'numberOfLowDepthAdjacents', header: 'Nb. Adj Niv 2 et moins', defaultFlex: 1, type: 'number' },
+  { name: 'numberOfDatesInCalAfterAprilFourth', header: 'Nb. Dates dans Cal', defaultFlex: 1, type: 'number' },
+  { name: 'numberOfOldSaveDateAdjacents', header: 'Nb de "vieux" adjacents', defaultFlex: 1, type: 'number' },
+  { name: 'numberOfOldSaveDateAndLowDepthAdjacents', header: 'Nb de "vieux" adjacents "proches"', defaultFlex: 1, type: 'number' },
 ];
 
 const defaultFilterValue = [
@@ -31,14 +35,18 @@ const defaultFilterValue = [
   { name: 'dateAsIsoString', operator: 'contains', type: 'string', value: '' },
   { name: 'firstDegreeAdjacents', operator: 'gte', type: 'number', value: '' },
   { name: 'totalNumberOfAdjacents', operator: 'gte', type: 'number', value: '' },
+  { name: 'numberOfLowDepthAdjacents', operator: 'gte', type: 'number', value: '' },
+  { name: 'numberOfDatesInCalAfterAprilFourth', operator: 'gte', type: 'number', value: '' },
+  { name: 'numberOfOldSaveDateAdjacents', operator: 'gte', type: 'number', value: '' },
+  { name: 'numberOfOldSaveDateAndLowDepthAdjacents', operator: 'gte', type: 'number', value: '' },
 ]
 
 const gridStyle = { minHeight: 400, fontFamily: 'sans-serif' }
 
 
-const CscDataGrid = ({ cscByCscKey, handleDataGridRowClick }) => {
+const CscDataGrid = ({ cscByCscKey, schedulingUnitDatesByCscKey = {}, handleDataGridRowClick }) => {
   const allCscs = Object.values(cscByCscKey);
-  createLinksAndComputeStats(allCscs);
+  createLinksAndComputeStats(allCscs, schedulingUnitDatesByCscKey);
   const dataSource = allCscs;
 
   const onRowClick = useCallback((rowProps) => {

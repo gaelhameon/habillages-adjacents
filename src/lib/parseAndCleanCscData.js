@@ -2,6 +2,9 @@ import Parser from "./control-file-and-csv-data-parser";
 import getAndSetIfRequired from "./getAndSetIfRequired";
 
 
+const DEFAULT_EARLY_SAVE_DATE_THRESHOLD = new Date(2023, 2, 15);
+
+
 export async function parseAndCleanCscData(data) {
   const { newControlFile, newDataFiles } = data;
   const [dataFile] = newDataFiles;
@@ -33,6 +36,7 @@ export async function parseAndCleanCscData(data) {
     const [_, day, month, year, hours, minutes, seconds = 0] = match;
     parentCsc.dateAsDate = new Date(`${year}-${month}-${day} ${hours}:${minutes}:${seconds}`);
     parentCsc.dateAsIsoString = parentCsc.dateAsDate.toISOString();
+    parentCsc.isOld = parentCsc.dateAsDate < DEFAULT_EARLY_SAVE_DATE_THRESHOLD;
     shortKey += 1;
     uniqueCscObjectByCscKey[cscKey] = parentCsc;
   });
