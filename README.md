@@ -1,4 +1,4 @@
-This is a quick 1 day project to visualize data extracted from Hastus.
+This is a quick and dirty 1 day project to visualize data extracted from Hastus.
 
 It uses some libs that will soon be published to NPM from https://github.com/bimodata/bimo.
 
