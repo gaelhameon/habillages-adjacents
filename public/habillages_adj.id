@@ -1,0 +1,47 @@
+att hide_inaccessible_values
+
+separator "|"
+
+file Tous_les_habillages
+   {
+   foreach crew_schedule
+      {
+      sort_by crew_scheduleSort
+         {
+         criteria csc_name { value 'csc_name' }
+         }
+
+      line crew_schedule
+         {
+	 item keyword { value ' "parent" ' }
+         item csc_name { value 'csc_name' }
+         item csc_sched_type { value 'csc_sched_type' }
+         item csc_scenario { value 'csc_scenario' }
+         item csc_booking { value 'csc_booking' }
+         item csc_description { value 'csc_description' }
+         item csc_service_ctx_id { value 'csc_service_ctx_id' }
+         item csc_sched_unit { value 'csc_sched_unit' }
+         item csc_owner { value 'csc_owner' }
+         item csc_user_stamp { value 'csc_user_stamp' }
+         item csc_datetime_stamp { value 'csc_datetime_stamp' }
+         }
+      foreach crew_schedule
+         {
+         from 'Object(crew_schedule, csc_same_day_adjacent_schedules)'
+         line crew_schedule
+            {
+            item keyword { value ' "adjacent" ' }
+            item csc_name { value 'csc_name' }
+            item csc_sched_type { value 'csc_sched_type' }
+            item csc_scenario { value 'csc_scenario' }
+            item csc_booking { value 'csc_booking' }
+            item csc_description { value 'csc_description' }
+            item csc_service_ctx_id { value 'csc_service_ctx_id' }
+            item csc_sched_unit { value 'csc_sched_unit' }
+            item csc_owner { value 'csc_owner' }
+            item csc_user_stamp { value 'csc_user_stamp' }
+            item csc_datetime_stamp { value 'csc_datetime_stamp' }
+            }
+         }
+      }
+   }

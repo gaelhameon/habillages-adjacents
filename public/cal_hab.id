@@ -1,0 +1,48 @@
+att hide_inaccessible_values
+
+separator "|"
+
+parameter p_DateSeuil
+   {
+   title  "Date Seuil"
+   titlef "Date Seuil"
+   desc   "See descf"
+   descf  "Date de calendrier à partir de laquelle les données sont exportées"
+   def_value '04/05/2023'
+   type date
+   }
+
+file habillages_calendrier
+   {
+   foreach scheduling_unit_date
+      {
+      sort_by scheduling_unit_dateSort
+         {
+         criteria scud_calendar_id { value 'scud_calendar_id' }
+         criteria scud_date { value 'scud_date' }
+         criteria scud_sched_unit_name { value 'scud_sched_unit_name' }
+         }
+
+      condition 'scud_sched_unit_type = ("CSC" AS ScuSchedUnitType_ch) and
+                 scud_with_schedule = true and
+                 scud_date >= p_DateSeuil and scud_date <> NULL and
+                 scud_schedule_name <> NULL'
+
+      line scheduling_unit_date
+         {
+         item keyword { value ' "scheduling_unit_date" ' }
+         item scud_calendar_id { value 'scud_calendar_id' }
+         item scud_booking_id { value 'scud_booking_id' }
+         item scud_date { value 'scud_date' }
+         item scud_sched_unit_name { value 'scud_sched_unit_name' }
+         item scud_sched_unit_type { value 'scud_sched_unit_type' }
+         item sctx_identifier { value 'Object(service_context, scud_service_context).sctx_identifier' }
+         item scud_display_text { value 'scud_display_text' }
+         item scud_prod_phase { value 'scud_prod_phase' }
+         item scud_schedule_booking { value 'scud_schedule_booking' }
+         item scud_schedule_name { value 'scud_schedule_name' }
+         item scud_schedule_type { value 'scud_schedule_type' }
+         item scud_sched_scenario { value 'scud_sched_scenario' }
+         }
+      }
+   }

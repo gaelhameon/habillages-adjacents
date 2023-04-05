@@ -1,0 +1,41 @@
+
+separator "|"
+
+line parent
+
+   {
+
+   keyword parent
+   object parent
+   item csc_name
+   item csc_sched_type
+   item csc_scenario
+   item csc_booking
+   item csc_description
+   item csc_service_ctx_id
+   item csc_sched_unit
+   item csc_owner
+   item csc_user_stamp
+   item csc_datetime_stamp
+
+   line adjacent
+
+      {
+
+      keyword adjacent
+      object adjacent
+
+      item csc_name
+      item csc_sched_type
+      item csc_scenario
+      item csc_booking
+      item csc_description
+      item csc_service_ctx_id
+      item csc_sched_unit
+      item csc_owner
+      item csc_user_stamp
+      item csc_datetime_stamp
+
+      }
+   }
+   

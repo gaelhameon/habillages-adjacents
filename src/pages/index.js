@@ -108,6 +108,7 @@ export function Index() {
       <div>
         <p>Notes de mise à jour</p>
         <ul>
+          <li>v1.13.0 - 05/04/2023 - Ajout de liens de téléchargement vers des exemples d'OIG/OIR</li>
           <li>v1.12.0 - 05/04/2023 - Certains paramètres de calcul des statistiques sont à la main des utilisateurs</li>
           <li>v1.11.0 - 04/04/2023 - Plusieurs nouveautés:
             <ul>
@@ -130,7 +131,13 @@ export function Index() {
           <li>v1.1.0 - 17/03/2023 - Les menus déroulants n'affichent désormais que des valeurs valides</li>
         </ul>
       </div>
-    </div>
+      <ul>
+        <li><a href='/cal_hab.id'>Exemple d'OIG pour Calendrier</a></li>
+        <li><a href='/cal_hab.oir'>Exemple d'OIR pour Calendrier</a></li>
+        <li><a href='/habillages_adj.id'>Exemple d'OIG pour Habillages</a></li>
+        <li><a href='/habillages_adj.oir'>Exemple d'OIR pour Habillages</a></li >
+      </ul >
+    </div >
   );
 }
 

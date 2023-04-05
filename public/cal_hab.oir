@@ -1,0 +1,21 @@
+
+separator "|"
+
+line scheduling_unit_date
+    {
+    keyword scheduling_unit_date
+    object scheduling_unit_date
+    item scud_calendar_id 
+    item scud_booking_id
+    item scud_date
+    item scud_sched_unit_name
+    item scud_sched_unit_type
+    item sctx_identifier
+    item scud_display_text
+    item scud_prod_phase
+    item scud_schedule_booking
+    item scud_schedule_name
+    item scud_schedule_type
+    item scud_sched_scenario
+    }
+}
