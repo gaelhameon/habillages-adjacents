@@ -1,11 +1,12 @@
 
-export default function createLinksAndComputeStats(cscs, schedulingUnitDatesByCscKey) {
-  cscs.forEach((csc) => createLinksAndComputeStatsForOneCsc(csc, schedulingUnitDatesByCscKey));
+export default function createLinksAndComputeStats(cscs, schedulingUnitDatesByCscKey, params) {
+  cscs.forEach((csc) => createLinksAndComputeStatsForOneCsc(csc, schedulingUnitDatesByCscKey, params));
 }
 
 
 export function createLinksAndComputeStatsForOneCsc(csc, schedulingUnitDatesByCscKey, {
-  lowDepthThreshold = 2
+  calendarThresholdDate,
+  thresholdDepth
 } = {}) {
   csc.allAdjacentCscs = new Set();
   csc.linkByLinkKey = new Map();
@@ -14,17 +15,19 @@ export function createLinksAndComputeStatsForOneCsc(csc, schedulingUnitDatesByCs
   simplifyBidirectionalLinks(csc.linkByLinkKey);
   csc.totalNumberOfAdjacents = csc.allAdjacentCscs.size - 1;
   csc.firstDegreeAdjacents = csc.uniqueAdjacents.length;
-  const schedulingUnitDatesOfCsc = schedulingUnitDatesByCscKey[csc.cscKey];
-  csc.numberOfDatesInCalAfterAprilFourth = schedulingUnitDatesOfCsc ? schedulingUnitDatesOfCsc.length : 0;
+
+  const schedulingUnitDatesOfCsc = schedulingUnitDatesByCscKey[csc.cscKey] ?? [];
+  const schedulingUnitDatesOfCscAfterThresholdDate = schedulingUnitDatesOfCsc.filter((schedUnitDate) => schedUnitDate.dateAsDate >= calendarThresholdDate)
+  csc.numberOfDatesInCalAfterThresholdDate = schedulingUnitDatesOfCscAfterThresholdDate.length;
 
   const adjacentCscAndDepthInfos = Array.from(csc.depthByAdjacentCsc.entries()).map(([adjacentCsc, depth]) => ({ adjacentCsc, depth }));
   const lowDepthAdjacents = adjacentCscAndDepthInfos.filter(({ depth }) => {
-    return depth <= lowDepthThreshold;
+    return depth <= thresholdDepth;
   });
   const oldSaveDateCscAndDepthInfos = adjacentCscAndDepthInfos.filter(({ adjacentCsc }) => {
     return adjacentCsc.isOld;
   });
-  const oldSaveDateAndDepthLessThanTwoCscAndDepthInfos = oldSaveDateCscAndDepthInfos.filter(({ depth }) => depth <= lowDepthThreshold);
+  const oldSaveDateAndDepthLessThanTwoCscAndDepthInfos = oldSaveDateCscAndDepthInfos.filter(({ depth }) => depth <= thresholdDepth);
   csc.numberOfOldSaveDateAdjacents = oldSaveDateCscAndDepthInfos.length;
   csc.numberOfOldSaveDateAndLowDepthAdjacents = oldSaveDateAndDepthLessThanTwoCscAndDepthInfos.length;
   csc.numberOfLowDepthAdjacents = lowDepthAdjacents.length;

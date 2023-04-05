@@ -1,4 +1,9 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+
+import ReactDatePicker, { registerLocale, setDefaultLocale } from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import fr from 'date-fns/locale/fr';
+registerLocale('fr', fr)
 
 import FilesPicker from '../components/FilesPicker';
 import CscSelector from '../components/CscSelector';
@@ -9,13 +14,25 @@ import Mermaid from '../components/Mermaid';
 import CscDataGrid from '@/components/CscDataGrid';
 
 export function Index() {
+  const [rawCscData, setRawCscData] = useState({});
   const [cleanCscData, setCleanCscData] = useState({});
   const [cleanCalData, setCleanCalData] = useState({});
   const [currentCscKey, setCurrentCscKey] = useState('');
   const [mermaidString, setMermaidString] = useState('graph TD\nA--->B');
+  const [oldSaveThresholdDate, setOldSaveThresholdDate] = useState(new Date(2023, 2, 15));
+  const [calendarThresholdDate, setCalendarThresholdDate] = useState(new Date());
+  const [thresholdDepth, setThresholdDepth] = useState(2);
 
-  const handleCscData = async (data) => {
-    const cleanData = await parseAndCleanCscData(data);
+  const handleRawCscData = async (data) => {
+    console.log(`Handling raw csc data`)
+    setRawCscData(data);
+    updateCleanCscData(data);
+  };
+
+  const updateCleanCscData = async (data) => {
+    const cleanData = await parseAndCleanCscData(data, oldSaveThresholdDate);
+    console.log(`setting cleandata`);
+    console.log(cleanData);
     setCleanCscData(cleanData);
   };
 
@@ -42,7 +59,7 @@ export function Index() {
 
 
   return (
-    <div>
+    <div style={{ fontFamily: 'sans-serif' }}>
       {cscByCscKey ? (
         <div>
           <CscSelector
@@ -58,19 +75,40 @@ export function Index() {
           </button>
           {/* <pre>{mermaidString}</pre> */}
           <Mermaid chart={mermaidString} name="liens" config={{}} />
-          <CscDataGrid cscByCscKey={cscByCscKey} schedulingUnitDatesByCscKey={schedulingUnitDatesByCscKey} handleDataGridRowClick={refreshMermaidString} />
+          <CscDataGrid
+            cscByCscKey={cscByCscKey}
+            schedulingUnitDatesByCscKey={schedulingUnitDatesByCscKey}
+            oldSaveThresholdDate={oldSaveThresholdDate}
+            calendarThresholdDate={calendarThresholdDate}
+            thresholdDepth={thresholdDepth}
+            handleDataGridRowClick={refreshMermaidString} />
         </div>
       ) : (
-        <FilesPicker handleData={handleCscData} text={`Habillages: glissez et déposez des fichiers ici, ou cliquez pour sélectionner des fichiers`} />
+        <FilesPicker handleData={handleRawCscData} text={`Habillages: glissez et déposez des fichiers ici, ou cliquez pour sélectionner des fichiers`} />
       )}
       {schedulingUnitDatesByCscKey ? (
         null
       ) : (
         <FilesPicker handleData={handleCalData} text={`Calendriers: glissez et déposez des fichiers ici, ou cliquez pour sélectionner des fichiers`} />
       )}
-      <div style={{ fontFamily: 'sans-serif' }}>
+
+      <div>
+        Date avant laquelle les habillages sont considérés comme "vieux":
+        <ReactDatePicker selected={oldSaveThresholdDate} onChange={(date) => setOldSaveThresholdDate(date)} locale="fr" dateFormat="dd/MM/yyyy" />
+      </div>
+      <div>
+        Date à partir de laquelle on cherche les habillages dans le calendrier":
+        <ReactDatePicker selected={calendarThresholdDate} onChange={(date) => setCalendarThresholdDate(date)} locale="fr" dateFormat="dd/MM/yyyy" />
+      </div>
+      <div>
+        Profondeur en dessous de laquelle les habillages sont considérés comme "proches":
+        <input value={thresholdDepth} onChange={({ target }) => setThresholdDepth(target.value)} />
+      </div>
+      <button onClick={() => updateCleanCscData(rawCscData)}>Actualiser</button>
+      <div>
         <p>Notes de mise à jour</p>
         <ul>
+          <li>v1.12.0 - 05/04/2023 - Certains paramètres de calcul des statistiques sont à la main des utilisateurs</li>
           <li>v1.11.0 - 04/04/2023 - Plusieurs nouveautés:
             <ul>
               <li>On peut désormais charger des données exportées depuis les calendriers pour avoir des statistiques sur la présence des habillages dans les calendriers</li>
