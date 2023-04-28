@@ -18,12 +18,12 @@ const columns = [
   { name: 'cscOwner', header: 'Propr.', defaultFlex: 1, headerProps },
   { name: 'cscUserStamp', header: 'Util.', defaultFlex: 1, headerProps },
   { name: 'dateAsIsoString', header: 'Dateur', defaultFlex: 1, type: 'string', headerProps },
-  { name: 'firstDegreeAdjacents', header: 'Nb. Adj', defaultFlex: 1, type: 'number', headerProps },
-  { name: 'totalNumberOfAdjacents', header: 'Nb. Total Adj', defaultFlex: 1, type: 'number', headerProps },
-  { name: 'numberOfLowDepthAdjacents', header: 'Nb. Adj "proches"', defaultFlex: 1, type: 'number', headerProps },
+  { name: 'firstDegreeIncomingLoadCscs', header: 'Nb. Adj', defaultFlex: 1, type: 'number', headerProps },
+  { name: 'totalNumberOfIncomingLoadCscs', header: 'Nb. Total Adj', defaultFlex: 1, type: 'number', headerProps },
+  { name: 'numberOfLowDepthIncoming', header: 'Nb. Adj "proches"', defaultFlex: 1, type: 'number', headerProps },
   { name: 'numberOfDatesInCalAfterThresholdDate', header: 'Nb. Dates dans Cal', defaultFlex: 1, type: 'number', headerProps },
-  { name: 'numberOfOldSaveDateAdjacents', header: 'Nb de "vieux" adjacents', defaultFlex: 1, type: 'number', headerProps },
-  { name: 'numberOfOldSaveDateAndLowDepthAdjacents', header: 'Nb de "vieux" adjacents "proches"', defaultFlex: 1, type: 'number', headerProps },
+  { name: 'numberOfOldSaveDateIncoming', header: 'Nb de "vieux" adjacents', defaultFlex: 1, type: 'number', headerProps },
+  { name: 'numberOfOldSaveDateAndLowDepthIncoming', header: 'Nb de "vieux" adjacents "proches"', defaultFlex: 1, type: 'number', headerProps },
 ];
 
 const defaultFilterValue = [
@@ -37,12 +37,12 @@ const defaultFilterValue = [
   { name: 'cscOwner', operator: 'contains', type: 'string', value: '' },
   { name: 'cscUserStamp', operator: 'contains', type: 'string', value: '' },
   { name: 'dateAsIsoString', operator: 'contains', type: 'string', value: '' },
-  { name: 'firstDegreeAdjacents', operator: 'gte', type: 'number', value: '' },
-  { name: 'totalNumberOfAdjacents', operator: 'gte', type: 'number', value: '' },
-  { name: 'numberOfLowDepthAdjacents', operator: 'gte', type: 'number', value: '' },
+  { name: 'firstDegreeIncomingLoadCscs', operator: 'gte', type: 'number', value: '' },
+  { name: 'totalNumberOfIncomingLoadCscs', operator: 'gte', type: 'number', value: '' },
+  { name: 'numberOfLowDepthIncoming', operator: 'gte', type: 'number', value: '' },
   { name: 'numberOfDatesInCalAfterThresholdDate', operator: 'gte', type: 'number', value: '' },
-  { name: 'numberOfOldSaveDateAdjacents', operator: 'gte', type: 'number', value: '' },
-  { name: 'numberOfOldSaveDateAndLowDepthAdjacents', operator: 'gte', type: 'number', value: '' },
+  { name: 'numberOfOldSaveDateIncoming', operator: 'gte', type: 'number', value: '' },
+  { name: 'numberOfOldSaveDateAndLowDepthIncoming', operator: 'gte', type: 'number', value: '' },
 ]
 
 const gridStyle = { minHeight: 400, fontFamily: 'sans-serif' }

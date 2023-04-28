@@ -41,7 +41,7 @@ export async function parseAndCleanCscData(data, oldSaveThresholdDate) {
   });
 
   Object.values(uniqueCscObjectByCscKey).forEach((csc) => {
-    csc.uniqueAdjacents = csc.adjacent.map((rawAdj) => uniqueCscObjectByCscKey[getKeyFromRawCsc(rawAdj)]);
+    csc.incomingLoadCscs = csc.adjacent.map((rawAdj) => uniqueCscObjectByCscKey[getKeyFromRawCsc(rawAdj)]);
     delete csc.adjacent;
   });
 

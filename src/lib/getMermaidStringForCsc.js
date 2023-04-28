@@ -5,7 +5,7 @@ export default function getMermaidStringForCsc(csc) {
   if (!csc.linkByLinkKey) {
     createLinksAndComputeStatsForOneCsc(csc);
   }
-  return getMermaidString(csc.linkByLinkKey, Array.from(csc.allAdjacentCscs), csc.depthByAdjacentCsc);
+  return getMermaidString(csc.linkByLinkKey, Array.from(csc.allIncomingLoadCscs), csc.depthByIncomingLoadCsc);
 }
 
 
@@ -19,21 +19,21 @@ export default function getMermaidStringForCsc(csc) {
  * 
  * @param {Map} linkByLinkKey 
  */
-function getMermaidString(linkByLinkKey, cscs, depthByAdjacentCsc) {
+function getMermaidString(linkByLinkKey, cscs, depthByIncomingLoadCsc) {
   const links = Array.from(linkByLinkKey.values());
 
   return `graph TD
 ${classesDefString}
-${getNodesString(cscs, depthByAdjacentCsc)}
+${getNodesString(cscs, depthByIncomingLoadCsc)}
 ${getLinksString(links)}
 ${legendString}
 ${getLinkStyleString(links)}
 `
 }
 
-function getNodesString(cscs, depthByAdjacentCsc) {
+function getNodesString(cscs, depthByIncomingLoadCsc) {
   return cscs.map((csc) => {
-    const depth = depthByAdjacentCsc.get(csc) ?? 0;
+    const depth = depthByIncomingLoadCsc.get(csc) ?? 0;
     return `${csc.shortKey}[${csc.cscKey}<br>`
       + `${csc.cscSchedUnit} ${csc.cscServiceCtxId ? ` _________ ${csc.cscServiceCtxId}` : ''}<br>`
       + `${csc.dateAsDate.toLocaleDateString()} ${csc.dateAsDate.toLocaleTimeString()} ${csc.cscUserStamp}<br>`

@@ -8,46 +8,46 @@ export function createLinksAndComputeStatsForOneCsc(csc, schedulingUnitDatesByCs
   calendarThresholdDate,
   thresholdDepth
 } = {}) {
-  csc.allAdjacentCscs = new Set();
+  csc.allIncomingLoadCscs = new Set();
   csc.linkByLinkKey = new Map();
-  csc.depthByAdjacentCsc = new Map();
-  recursivelyVisitCscAndCreateLinks(csc, csc.allAdjacentCscs, csc.linkByLinkKey, csc, 0);
+  csc.depthByIncomingLoadCsc = new Map();
+  recursivelyVisitCscAndCreateLinks(csc, csc.allIncomingLoadCscs, csc.linkByLinkKey, csc, 0);
   simplifyBidirectionalLinks(csc.linkByLinkKey);
-  csc.totalNumberOfAdjacents = csc.allAdjacentCscs.size - 1;
-  csc.firstDegreeAdjacents = csc.uniqueAdjacents.length;
+  csc.totalNumberOfIncomingLoadCscs = csc.allIncomingLoadCscs.size - 1;
+  csc.firstDegreeIncomingLoadCscs = csc.incomingLoadCscs.length;
 
   const schedulingUnitDatesOfCsc = schedulingUnitDatesByCscKey[csc.cscKey] ?? [];
   const schedulingUnitDatesOfCscAfterThresholdDate = schedulingUnitDatesOfCsc.filter((schedUnitDate) => schedUnitDate.dateAsDate >= calendarThresholdDate)
   csc.numberOfDatesInCalAfterThresholdDate = schedulingUnitDatesOfCscAfterThresholdDate.length;
 
-  const adjacentCscAndDepthInfos = Array.from(csc.depthByAdjacentCsc.entries()).map(([adjacentCsc, depth]) => ({ adjacentCsc, depth }));
-  const lowDepthAdjacents = adjacentCscAndDepthInfos.filter(({ depth }) => {
+  const incomingCscAndDepthInfos = Array.from(csc.depthByIncomingLoadCsc.entries()).map(([adjacentCsc, depth]) => ({ adjacentCsc, depth }));
+  const lowDepthIncoming = incomingCscAndDepthInfos.filter(({ depth }) => {
     return depth <= thresholdDepth;
   });
-  const oldSaveDateCscAndDepthInfos = adjacentCscAndDepthInfos.filter(({ adjacentCsc }) => {
+  const oldSaveDateCscAndDepthInfos = incomingCscAndDepthInfos.filter(({ adjacentCsc }) => {
     return adjacentCsc.isOld;
   });
   const oldSaveDateAndDepthLessThanTwoCscAndDepthInfos = oldSaveDateCscAndDepthInfos.filter(({ depth }) => depth <= thresholdDepth);
-  csc.numberOfOldSaveDateAdjacents = oldSaveDateCscAndDepthInfos.length;
-  csc.numberOfOldSaveDateAndLowDepthAdjacents = oldSaveDateAndDepthLessThanTwoCscAndDepthInfos.length;
-  csc.numberOfLowDepthAdjacents = lowDepthAdjacents.length;
+  csc.numberOfOldSaveDateIncoming = oldSaveDateCscAndDepthInfos.length;
+  csc.numberOfOldSaveDateAndLowDepthIncoming = oldSaveDateAndDepthLessThanTwoCscAndDepthInfos.length;
+  csc.numberOfLowDepthIncoming = lowDepthIncoming.length;
 }
 
 function recursivelyVisitCscAndCreateLinks(cscToVisit, visitedCscs, linkByLinkKey, originalCsc, depth) {
   visitedCscs.add(cscToVisit);
   if (depth > 0) {
-    originalCsc.depthByAdjacentCsc.set(cscToVisit, depth);
+    originalCsc.depthByIncomingLoadCsc.set(cscToVisit, depth);
   }
-  cscToVisit.uniqueAdjacents.forEach((adjCsc) => {
+  cscToVisit.incomingLoadCscs.forEach((adjCsc) => {
     const link = { from: cscToVisit, to: adjCsc, isBidirectional: false, key: `${cscToVisit.shortKey}|${adjCsc.shortKey}`, depth };
     linkByLinkKey.set(link.key, link);
     if (!visitedCscs.has(adjCsc)) {
       recursivelyVisitCscAndCreateLinks(adjCsc, visitedCscs, linkByLinkKey, originalCsc, depth + 1);
     }
     else {
-      const currentDepthOfThisCsc = originalCsc.depthByAdjacentCsc.get(adjCsc);
+      const currentDepthOfThisCsc = originalCsc.depthByIncomingLoadCsc.get(adjCsc);
       if ((depth + 1) < currentDepthOfThisCsc) {
-        originalCsc.depthByAdjacentCsc.set(adjCsc, depth + 1)
+        originalCsc.depthByIncomingLoadCsc.set(adjCsc, depth + 1)
       }
     }
   });
