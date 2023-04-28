@@ -1,19 +1,19 @@
 
-import { createLinksAndComputeStatsForOneCsc } from "./createLinksAndComputeStats";
+import { createIncomingLinksAndComputeStatsForOneCsc, createOutgoingLinksAndComputeStatsForOneCsc } from "./createLinksAndComputeStats";
 
-export default function getMermaidStringForCsc(csc) {
+export function getIncomingMermaidStringForCsc(csc) {
   if (!csc.linkByLinkKey) {
-    createLinksAndComputeStatsForOneCsc(csc);
+    createIncomingLinksAndComputeStatsForOneCsc(csc);
   }
   return getMermaidString(csc.linkByLinkKey, Array.from(csc.allIncomingLoadCscs), csc.depthByIncomingLoadCsc);
 }
 
-
-
-
-
-
-
+export function getOutgoingMermaidStringForCsc(csc) {
+  if (!csc.outgoingLinkByLinkKey) {
+    createOutgoingLinksAndComputeStatsForOneCsc(csc);
+  }
+  return getMermaidString(csc.outgoingLinkByLinkKey, Array.from(csc.allOutgoingLoadCscs), csc.depthByOutgoingLoadCsc);
+}
 
 /**
  * 

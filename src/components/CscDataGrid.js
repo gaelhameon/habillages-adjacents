@@ -18,12 +18,15 @@ const columns = [
   { name: 'cscOwner', header: 'Propr.', defaultFlex: 1, headerProps },
   { name: 'cscUserStamp', header: 'Util.', defaultFlex: 1, headerProps },
   { name: 'dateAsIsoString', header: 'Dateur', defaultFlex: 1, type: 'string', headerProps },
-  { name: 'firstDegreeIncomingLoadCscs', header: 'Nb. Adj', defaultFlex: 1, type: 'number', headerProps },
-  { name: 'totalNumberOfIncomingLoadCscs', header: 'Nb. Total Adj', defaultFlex: 1, type: 'number', headerProps },
-  { name: 'numberOfLowDepthIncoming', header: 'Nb. Adj "proches"', defaultFlex: 1, type: 'number', headerProps },
+  { name: 'firstDegreeIncomingLoadCscs', header: 'Nb. Adj Ent.', defaultFlex: 1, type: 'number', headerProps },
+  { name: 'totalNumberOfIncomingLoadCscs', header: 'Nb. Total Adj Ent.', defaultFlex: 1, type: 'number', headerProps },
+  { name: 'numberOfLowDepthIncoming', header: 'Nb. Adj Ent. "proches"', defaultFlex: 1, type: 'number', headerProps },
   { name: 'numberOfDatesInCalAfterThresholdDate', header: 'Nb. Dates dans Cal', defaultFlex: 1, type: 'number', headerProps },
-  { name: 'numberOfOldSaveDateIncoming', header: 'Nb de "vieux" adjacents', defaultFlex: 1, type: 'number', headerProps },
-  { name: 'numberOfOldSaveDateAndLowDepthIncoming', header: 'Nb de "vieux" adjacents "proches"', defaultFlex: 1, type: 'number', headerProps },
+  { name: 'numberOfOldSaveDateIncoming', header: 'Nb de "vieux" adjacents ent.', defaultFlex: 1, type: 'number', headerProps },
+  { name: 'numberOfOldSaveDateAndLowDepthIncoming', header: 'Nb de "vieux" adjacents ent. "proches"', defaultFlex: 1, type: 'number', headerProps },
+  { name: 'firstDegreeOutgoingLoadCscs', header: 'Nb Adj Sort.', defaultFlex: 1, type: 'number', headerProps },
+  { name: 'totalNumberOfOutgoingLoadCscs', header: 'Nb Total Adj Sort.', defaultFlex: 1, type: 'number', headerProps },
+  { name: 'firstDegreeOutgoingToOtherBookings', header: 'Nb adj sort autres reg', defaultFlex: 1, type: 'number', headerProps },
 ];
 
 const defaultFilterValue = [
@@ -43,6 +46,10 @@ const defaultFilterValue = [
   { name: 'numberOfDatesInCalAfterThresholdDate', operator: 'gte', type: 'number', value: '' },
   { name: 'numberOfOldSaveDateIncoming', operator: 'gte', type: 'number', value: '' },
   { name: 'numberOfOldSaveDateAndLowDepthIncoming', operator: 'gte', type: 'number', value: '' },
+  { name: 'firstDegreeOutgoingLoadCscs', operator: 'gte', type: 'number', value: '' },
+  { name: 'totalNumberOfOutgoingLoadCscs', operator: 'gte', type: 'number', value: '' },
+  { name: 'firstDegreeOutgoingToOtherBookings', operator: 'gte', type: 'number', value: '' },
+
 ]
 
 const gridStyle = { minHeight: 400, fontFamily: 'sans-serif' }

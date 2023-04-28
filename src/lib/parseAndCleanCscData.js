@@ -43,6 +43,10 @@ export async function parseAndCleanCscData(data, oldSaveThresholdDate) {
   Object.values(uniqueCscObjectByCscKey).forEach((csc) => {
     csc.incomingLoadCscs = csc.adjacent.map((rawAdj) => uniqueCscObjectByCscKey[getKeyFromRawCsc(rawAdj)]);
     delete csc.adjacent;
+    csc.incomingLoadCscs.forEach((incomingLoadCsc) => {
+      const outgoingLoadCscs = getAndSetIfRequired(incomingLoadCsc, 'outgoingLoadCscs', []);
+      outgoingLoadCscs.push(csc);
+    })
   });
 
 

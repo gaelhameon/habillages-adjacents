@@ -25,7 +25,7 @@ const Mermaid = ({ name, chart, config }) => {
 
   useEffect(() => {
     try {
-      mermaid.render('mermaid', chart, (newSvg) => {
+      mermaid.render(`mermaid-${name}`, chart, (newSvg) => {
         svgWrapperRef.current.innerHTML = newSvg;
       });
     } catch (error) {

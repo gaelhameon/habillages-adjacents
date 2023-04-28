@@ -1,17 +1,19 @@
 
 export default function createLinksAndComputeStats(cscs, schedulingUnitDatesByCscKey, params) {
-  cscs.forEach((csc) => createLinksAndComputeStatsForOneCsc(csc, schedulingUnitDatesByCscKey, params));
+  cscs.forEach((csc) => {
+    createIncomingLinksAndComputeStatsForOneCsc(csc, schedulingUnitDatesByCscKey, params);
+    createOutgoingLinksAndComputeStatsForOneCsc(csc);
+  });
 }
 
-
-export function createLinksAndComputeStatsForOneCsc(csc, schedulingUnitDatesByCscKey, {
+export function createIncomingLinksAndComputeStatsForOneCsc(csc, schedulingUnitDatesByCscKey, {
   calendarThresholdDate,
   thresholdDepth
 } = {}) {
   csc.allIncomingLoadCscs = new Set();
   csc.linkByLinkKey = new Map();
   csc.depthByIncomingLoadCsc = new Map();
-  recursivelyVisitCscAndCreateLinks(csc, csc.allIncomingLoadCscs, csc.linkByLinkKey, csc, 0);
+  recursivelyVisitCscAndCreateLinks(csc, csc.allIncomingLoadCscs, csc.linkByLinkKey, csc, 0, 'incoming');
   simplifyBidirectionalLinks(csc.linkByLinkKey);
   csc.totalNumberOfIncomingLoadCscs = csc.allIncomingLoadCscs.size - 1;
   csc.firstDegreeIncomingLoadCscs = csc.incomingLoadCscs.length;
@@ -33,21 +35,47 @@ export function createLinksAndComputeStatsForOneCsc(csc, schedulingUnitDatesByCs
   csc.numberOfLowDepthIncoming = lowDepthIncoming.length;
 }
 
-function recursivelyVisitCscAndCreateLinks(cscToVisit, visitedCscs, linkByLinkKey, originalCsc, depth) {
+export function createOutgoingLinksAndComputeStatsForOneCsc(csc) {
+  csc.allOutgoingLoadCscs = new Set();
+  csc.outgoingLinkByLinkKey = new Map();
+  csc.depthByOutgoingLoadCsc = new Map();
+  recursivelyVisitCscAndCreateLinks(csc, csc.allOutgoingLoadCscs, csc.outgoingLinkByLinkKey, csc, 0, 'outgoing');
+  simplifyBidirectionalLinks(csc.outgoingLinkByLinkKey);
+  csc.totalNumberOfOutgoingLoadCscs = csc.allOutgoingLoadCscs.size - 1;
+  csc.firstDegreeOutgoingLoadCscs = csc.outgoingLoadCscs?.length ?? 0;
+  csc.firstDegreeOutgoingToOtherBookings = csc.outgoingLoadCscs?.filter((outCsc) => outCsc.cscBooking !== csc.cscBooking).length ?? 0;
+}
+
+
+const propNameByPropKeyByMode = {
+  'incoming': {
+    depthByAdjacentCsc: 'depthByIncomingLoadCsc',
+    adjacentCscs: 'incomingLoadCscs',
+  },
+  'outgoing': {
+    depthByAdjacentCsc: 'depthByOutgoingLoadCsc',
+    adjacentCscs: 'outgoingLoadCscs',
+  },
+}
+
+function recursivelyVisitCscAndCreateLinks(cscToVisit, visitedCscs, linkByLinkKey, originalCsc, depth, mode, maxDepth) {
+  if (maxDepth && depth > maxDepth) return;
+  const { depthByAdjacentCsc, adjacentCscs } = propNameByPropKeyByMode[mode];
   visitedCscs.add(cscToVisit);
   if (depth > 0) {
-    originalCsc.depthByIncomingLoadCsc.set(cscToVisit, depth);
+    originalCsc[depthByAdjacentCsc].set(cscToVisit, depth);
   }
-  cscToVisit.incomingLoadCscs.forEach((adjCsc) => {
+  if (!cscToVisit[adjacentCscs]) return;
+  cscToVisit[adjacentCscs].forEach((adjCsc) => {
     const link = { from: cscToVisit, to: adjCsc, isBidirectional: false, key: `${cscToVisit.shortKey}|${adjCsc.shortKey}`, depth };
     linkByLinkKey.set(link.key, link);
     if (!visitedCscs.has(adjCsc)) {
-      recursivelyVisitCscAndCreateLinks(adjCsc, visitedCscs, linkByLinkKey, originalCsc, depth + 1);
+      recursivelyVisitCscAndCreateLinks(adjCsc, visitedCscs, linkByLinkKey, originalCsc, depth + 1, mode);
     }
     else {
-      const currentDepthOfThisCsc = originalCsc.depthByIncomingLoadCsc.get(adjCsc);
+      const currentDepthOfThisCsc = originalCsc[depthByAdjacentCsc].get(adjCsc);
       if ((depth + 1) < currentDepthOfThisCsc) {
-        originalCsc.depthByIncomingLoadCsc.set(adjCsc, depth + 1)
+        originalCsc[depthByAdjacentCsc].set(adjCsc, depth + 1)
       }
     }
   });

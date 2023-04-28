@@ -9,16 +9,38 @@ import FilesPicker from '../components/FilesPicker';
 import CscSelector from '../components/CscSelector';
 import { parseAndCleanCscData } from '../lib/parseAndCleanCscData';
 import { parseAndCleanCalData } from '../lib/parseAndCleanCalData';
-import getMermaidStringForCsc from '../lib/getMermaidStringForCsc';
+import { getIncomingMermaidStringForCsc, getOutgoingMermaidStringForCsc } from '../lib/getMermaidStringForCsc';
 import Mermaid from '../components/Mermaid';
 import CscDataGrid from '@/components/CscDataGrid';
+
+// function getHeadersForCscs(csc) {
+//   const headers = Object.keys(csc).filter((key) => ['number', 'string'].includes(typeof csc[key]));
+//   console.log(headers);
+//   return headers;
+// }
+
+const headers = [
+  'cscName', 'cscSchedType', 'cscScenario', 'cscBooking', 'cscDescription', 'cscServiceCtxId',
+  'cscSchedUnit', 'cscOwner', 'cscUserStamp', 'cscDatetimeStamp', 'cscKey', 'shortKey', 'dateAsIsoString',
+  'totalNumberOfIncomingLoadCscs', 'firstDegreeIncomingLoadCscs', 'numberOfDatesInCalAfterThresholdDate',
+  'numberOfOldSaveDateIncoming', 'numberOfOldSaveDateAndLowDepthIncoming', 'numberOfLowDepthIncoming',
+  'totalNumberOfOutgoingLoadCscs', 'firstDegreeOutgoingLoadCscs', 'firstDegreeOutgoingToOtherBookings']
+function getCsvDataStringFromCsc(csc) {
+  return `"${headers.map((header) => csc[header]).join('";"')}"`;
+}
+const headersLine = `"${headers.join('";"')}"`;
+
+
+
 
 export function Index() {
   const [rawCscData, setRawCscData] = useState({});
   const [cleanCscData, setCleanCscData] = useState({});
   const [cleanCalData, setCleanCalData] = useState({});
   const [currentCscKey, setCurrentCscKey] = useState('');
-  const [mermaidString, setMermaidString] = useState('graph TD\nA--->B');
+  const [incomingMermaidString, setIncomingMermaidString] = useState('graph TD\nA--->B');
+  const [outgoingMermaidString, setOutgoingMermaidString] = useState('graph TD\nA--->B');
+  const [outputDataString, setOutputDataString] = useState('');
   const [oldSaveThresholdDate, setOldSaveThresholdDate] = useState(new Date(2023, 2, 15));
   const [calendarThresholdDate, setCalendarThresholdDate] = useState(new Date());
   const [thresholdDepth, setThresholdDepth] = useState(2);
@@ -46,17 +68,39 @@ export function Index() {
   const { cscByCscKey } = cleanCscData;
   const { schedulingUnitDatesByCscKey } = cleanCalData;
 
-  const refreshMermaidString = (cscKey) => {
+  const refreshMermaidStrings = (cscKey) => {
     const csc = cscByCscKey[cscKey];
     if (!csc) {
       alert(`Identifiant d'habillage invalide: ${cscKey}`);
     } else {
-      const mermaidString = getMermaidStringForCsc(cscByCscKey[cscKey]);
-      setMermaidString(mermaidString);
+      const incomingMermaidString = getIncomingMermaidStringForCsc(cscByCscKey[cscKey]);
+      const outgoingMermaidString = getOutgoingMermaidStringForCsc(cscByCscKey[cscKey]);
+      setIncomingMermaidString(incomingMermaidString);
+      setOutgoingMermaidString(outgoingMermaidString);
     }
   };
 
+  const outputIncomingData = (cscKey) => {
+    const csc = cscByCscKey[cscKey];
+    if (!csc) {
+      alert(`Identifiant d'habillage invalide: ${cscKey}`);
+    } else {
+      setOutputDataString(headersLine + '\n' +
+        csc.incomingLoadCscs?.map(getCsvDataStringFromCsc).join('\n')
+      )
+    }
+  }
 
+  const outputOutgoingData = (cscKey) => {
+    const csc = cscByCscKey[cscKey];
+    if (!csc) {
+      alert(`Identifiant d'habillage invalide: ${cscKey}`);
+    } else {
+      setOutputDataString(headersLine + '\n' +
+        csc.outgoingLoadCscs?.map(getCsvDataStringFromCsc).join('\n')
+      )
+    }
+  }
 
   return (
     <div style={{ fontFamily: 'sans-serif' }}>
@@ -67,21 +111,30 @@ export function Index() {
             setCurrentCscKey={setCurrentCscKey}
             data={cleanCscData}
           />{' '}
-          <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            onClick={() => refreshMermaidString(currentCscKey)}
-          >
-            Actualiser le graphique
-          </button>
-          {/* <pre>{mermaidString}</pre> */}
-          <Mermaid chart={mermaidString} name="liens" config={{}} />
+          <button onClick={() => refreshMermaidStrings(currentCscKey)}>Actualiser les graphiques</button>
+          <h2>Liens entrants</h2>
+          <Mermaid chart={incomingMermaidString} name="incoming" config={{}} />
+          <h2>Liens sortants</h2>
+          <Mermaid chart={outgoingMermaidString} name="outgoing" config={{}} />
           <CscDataGrid
             cscByCscKey={cscByCscKey}
             schedulingUnitDatesByCscKey={schedulingUnitDatesByCscKey}
             oldSaveThresholdDate={oldSaveThresholdDate}
             calendarThresholdDate={calendarThresholdDate}
             thresholdDepth={thresholdDepth}
-            handleDataGridRowClick={refreshMermaidString} />
+            handleDataGridRowClick={(cscKey) => {
+              setCurrentCscKey(cscKey);
+              refreshMermaidStrings(cscKey);
+            }} />
+          <button onClick={() => outputIncomingData(currentCscKey)}>Voir données habillages entrants</button>
+          <button onClick={() => outputOutgoingData(currentCscKey)}>Voir données habillages sortants</button>
+          <button onClick={() => navigator.clipboard.writeText(outputDataString)}>Copier vers le presse papier</button>
+          <button onClick={() => setOutputDataString('')}>Effacer données</button>
+          <pre>{outputDataString}</pre>
+          {/* <h2>Liens entrants</h2>
+          <pre>{incomingMermaidString}</pre>
+          <h2>Liens sortants</h2>
+          <pre>{outgoingMermaidString}</pre> */}
         </div>
       ) : (
         <FilesPicker handleData={handleRawCscData} text={`Habillages: glissez et déposez des fichiers ici, ou cliquez pour sélectionner des fichiers`} />
@@ -108,6 +161,7 @@ export function Index() {
       <div>
         <p>Notes de mise à jour</p>
         <ul>
+          <li>v1.14.0 - 28/04/2023 - Ajout de fonctionnalités liées aux liens d'adjacences "sortants"</li>
           <li>v1.13.0 - 05/04/2023 - Ajout de liens de téléchargement vers des exemples d'OIG/OIR</li>
           <li>v1.12.0 - 05/04/2023 - Certains paramètres de calcul des statistiques sont à la main des utilisateurs</li>
           <li>v1.11.0 - 04/04/2023 - Plusieurs nouveautés:
