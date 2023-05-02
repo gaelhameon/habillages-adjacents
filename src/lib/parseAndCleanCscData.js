@@ -29,6 +29,7 @@ export async function parseAndCleanCscData(data, oldSaveThresholdDate) {
     fillScenariosBySchedTypeByNameByBooking(scenariosBySchedTypeByNameByBooking, parentCsc);
     parentCsc.cscKey = cscKey;
     parentCsc.shortKey = shortKey;
+    parentCsc.regionLetter = parentCsc.cscSchedUnit.slice(0, 1);
 
     const match = dateTimeMatcher.exec(parentCsc.cscDatetimeStamp);
     if (!match) throw new Error(`Mauvais format de date: ${parentCsc.cscDatetimeStamp}`);

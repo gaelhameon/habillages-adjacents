@@ -1,10 +1,11 @@
 import Parser from "./control-file-and-csv-data-parser";
 import getAndSetIfRequired from "./getAndSetIfRequired";
+import { get } from "lodash";
 
 export async function computeDependencyData(cscByCscKey, schedulingUnitDatesByCscKey) {
 
   const dependencyDataBySchedulingUnit = {};
-
+  const allDates = [];
   Object.values(cscByCscKey).forEach((csc) => {
     (csc.outgoingLoadCscs ?? []).forEach((outgoingLoadCsc) => {
 
@@ -39,6 +40,12 @@ export async function computeDependencyData(cscByCscKey, schedulingUnitDatesByCs
           de: incomingLoadCsc,
           vers: csc,
           // scudDate: schedUnitDate
+        });
+
+        allDates.push({
+          from: incomingLoadCsc,
+          to: csc,
+          scudDate: schedUnitDate
         })
       })
 
@@ -49,8 +56,35 @@ export async function computeDependencyData(cscByCscKey, schedulingUnitDatesByCs
 
   console.log({ dependencyDataBySchedulingUnit });
 
-  return dependencyDataBySchedulingUnit
+  return { dependencyDataBySchedulingUnit, allDates }
 }
 
+
+
+const headers = [
+  'date',
+  'de région',
+  'vers région',
+  'de UH',
+  'vers UH',
+  'de habillage',
+  'vers habillage',
+];
+const paths = [
+  'scudDate.dateAsIsoString',
+  'from.regionLetter',
+  'to.regionLetter',
+  'from.cscSchedUnit',
+  'to.cscSchedUnit',
+  'from.cscKey',
+  'to.cscKey',
+];
+export function getDependencyDataAsCsv({ allDates }) {
+  const headersLine = `"${headers.join('";"')}"`;
+  const dateLines = allDates.map((dateData) => {
+    return `"${paths.map((path) => get(dateData, path)).join('";"')}"`;
+  })
+  return [headersLine, ...dateLines].join('\n')
+}
 
 

@@ -26,7 +26,7 @@ export async function parseAndCleanCalData(data) {
     if (!match) throw new Error(`Mauvais format de date: ${schedUnitDate.scudDate}`);
     const [_, day, month, year] = match;
     schedUnitDate.dateAsDate = new Date(`${year}-${month}-${day}`);
-    schedUnitDate.dateAsIsoString = schedUnitDate.dateAsDate.toDateString();
+    schedUnitDate.dateAsIsoString = schedUnitDate.dateAsDate.toISOString();
     const schedulingUnitDates = getAndSetIfRequired(schedulingUnitDatesByCscKey, cscKey, []);
     schedulingUnitDates.push(schedUnitDate);
   });

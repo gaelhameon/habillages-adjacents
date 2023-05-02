@@ -9,7 +9,7 @@ import FilesPicker from '../components/FilesPicker';
 import CscSelector from '../components/CscSelector';
 import { parseAndCleanCscData } from '../lib/parseAndCleanCscData';
 import { parseAndCleanCalData } from '../lib/parseAndCleanCalData';
-import { computeDependencyData } from '../lib/computeDependencyData';
+import { computeDependencyData, getDependencyDataAsCsv } from '../lib/computeDependencyData';
 import { getIncomingMermaidStringForCsc, getOutgoingMermaidStringForCsc } from '../lib/getMermaidStringForCsc';
 import Mermaid from '../components/Mermaid';
 import CscDataGrid from '@/components/CscDataGrid';
@@ -61,7 +61,6 @@ export function Index() {
 
   const handleCalData = async (data) => {
     const cleanData = await parseAndCleanCalData(data);
-    await computeDependencyData(cleanCscData.cscByCscKey, cleanData.schedulingUnitDatesByCscKey);
     setCleanCalData(cleanData);
   };
 
@@ -104,6 +103,11 @@ export function Index() {
     }
   }
 
+  const outputDependencyData = async () => {
+    const dependencyData = await computeDependencyData(cleanCscData.cscByCscKey, cleanCalData.schedulingUnitDatesByCscKey);
+    setOutputDataString(getDependencyDataAsCsv(dependencyData));
+  }
+
   return (
     <div style={{ fontFamily: 'sans-serif' }}>
       {cscByCscKey ? (
@@ -130,6 +134,7 @@ export function Index() {
             }} />
           <button onClick={() => outputIncomingData(currentCscKey)}>Voir données habillages entrants</button>
           <button onClick={() => outputOutgoingData(currentCscKey)}>Voir données habillages sortants</button>
+          <button onClick={() => outputDependencyData()}>Voir données dépendances</button>
           <button onClick={() => navigator.clipboard.writeText(outputDataString)}>Copier vers le presse papier</button>
           <button onClick={() => setOutputDataString('')}>Effacer données</button>
           <pre>{outputDataString}</pre>
