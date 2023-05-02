@@ -50,6 +50,7 @@ export async function parseAndCleanCscData(data, oldSaveThresholdDate) {
   });
 
 
+
   return {
     cscByCscKey: uniqueCscObjectByCscKey,
     scenariosBySchedTypeByNameByBooking,
@@ -74,5 +75,6 @@ function fillScenariosBySchedTypeByNameByBooking(scenariosBySchedTypeByNameByBoo
   const scenarios = getAndSetIfRequired(scenariosBySchedTypeByNameByBooking, [cscBooking, cscName, cscSchedType], []);
   scenarios.push(cscScenario);
 }
+
 
 

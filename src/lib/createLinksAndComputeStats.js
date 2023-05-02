@@ -4,6 +4,7 @@ export default function createLinksAndComputeStats(cscs, schedulingUnitDatesByCs
     createIncomingLinksAndComputeStatsForOneCsc(csc, schedulingUnitDatesByCscKey, params);
     createOutgoingLinksAndComputeStatsForOneCsc(csc);
   });
+  const outgoingSchedUnitBySchedUnit = computeOutgoingSchedUnitBySchedUnit(cscs);
 }
 
 export function createIncomingLinksAndComputeStatsForOneCsc(csc, schedulingUnitDatesByCscKey, {
@@ -100,4 +101,8 @@ function simplifyBidirectionalLinks(linkByLinkKey) {
   linksToDelete.forEach((linkToDelete) => {
     linkByLinkKey.delete(linkToDelete.key);
   });
+}
+
+export function computeOutgoingSchedUnitBySchedUnit(cscs) {
+  const outgoingSchedUnitBySchedUnit = {};
 }

@@ -9,6 +9,7 @@ import FilesPicker from '../components/FilesPicker';
 import CscSelector from '../components/CscSelector';
 import { parseAndCleanCscData } from '../lib/parseAndCleanCscData';
 import { parseAndCleanCalData } from '../lib/parseAndCleanCalData';
+import { computeDependencyData } from '../lib/computeDependencyData';
 import { getIncomingMermaidStringForCsc, getOutgoingMermaidStringForCsc } from '../lib/getMermaidStringForCsc';
 import Mermaid from '../components/Mermaid';
 import CscDataGrid from '@/components/CscDataGrid';
@@ -60,6 +61,7 @@ export function Index() {
 
   const handleCalData = async (data) => {
     const cleanData = await parseAndCleanCalData(data);
+    await computeDependencyData(cleanCscData.cscByCscKey, cleanData.schedulingUnitDatesByCscKey);
     setCleanCalData(cleanData);
   };
 
