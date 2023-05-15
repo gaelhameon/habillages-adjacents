@@ -11,6 +11,7 @@ import { parseAndCleanCscData } from '../lib/parseAndCleanCscData';
 import { parseAndCleanCalData } from '../lib/parseAndCleanCalData';
 import { computeDependencyData, getDependencyDataAsCsv } from '../lib/computeDependencyData';
 import { getIncomingMermaidStringForCsc, getOutgoingMermaidStringForCsc } from '../lib/getMermaidStringForCsc';
+import { getMermaidString as getGeneralMermaidString } from "../lib/getMermaidStringForDepData";
 import Mermaid from '../components/Mermaid';
 import CscDataGrid from '@/components/CscDataGrid';
 
@@ -41,6 +42,10 @@ export function Index() {
   const [currentCscKey, setCurrentCscKey] = useState('');
   const [incomingMermaidString, setIncomingMermaidString] = useState('graph TD\nA--->B');
   const [outgoingMermaidString, setOutgoingMermaidString] = useState('graph TD\nA--->B');
+  const [generalMermaidString, setGeneralMermaidString] = useState('graph TD\nA--->B');
+  const [lettersOfRegionsToInclude, setLettersOfRegionsToInclude] = useState('B;C;D;F;G;J;K;L;M;R;S;T;U');
+  const [includeInternalLinks, setIncludeInternalLinks] = useState(true);
+  const [minimumNumberOfDatesToKeepLink, setMinimumNumberOfDatesToKeepLink] = useState(0);
   const [outputDataString, setOutputDataString] = useState('');
   const [oldSaveThresholdDate, setOldSaveThresholdDate] = useState(new Date(2023, 2, 15));
   const [calendarThresholdDate, setCalendarThresholdDate] = useState(new Date());
@@ -76,8 +81,10 @@ export function Index() {
     } else {
       const incomingMermaidString = getIncomingMermaidStringForCsc(cscByCscKey[cscKey]);
       const outgoingMermaidString = getOutgoingMermaidStringForCsc(cscByCscKey[cscKey]);
+
       setIncomingMermaidString(incomingMermaidString);
       setOutgoingMermaidString(outgoingMermaidString);
+
     }
   };
 
@@ -106,6 +113,21 @@ export function Index() {
   const outputDependencyData = async () => {
     const dependencyData = await computeDependencyData(cleanCscData.cscByCscKey, cleanCalData.schedulingUnitDatesByCscKey);
     setOutputDataString(getDependencyDataAsCsv(dependencyData));
+    const generalMermaidString = getGeneralMermaidString(dependencyData.numberOfDatesBySchedUnitsKey, {
+      lettersOfRegionsToInclude: lettersOfRegionsToInclude.split(';'),
+      includeInternalLinks,
+      minimumNumberOfDatesToKeepLink
+    });
+    setGeneralMermaidString(generalMermaidString);
+  }
+
+  const handleCheckBoxChange = () => {
+    console.log(includeInternalLinks);
+    setIncludeInternalLinks((prev) => {
+      console.log(prev);
+      return !prev
+    });
+
   }
 
   return (
@@ -122,6 +144,25 @@ export function Index() {
           <Mermaid chart={incomingMermaidString} name="incoming" config={{}} />
           <h2>Liens sortants</h2>
           <Mermaid chart={outgoingMermaidString} name="outgoing" config={{}} />
+          <h2>Général</h2>
+          <input type="text" id="lettersOfRegionsToInclude"
+            size={50}
+            value={lettersOfRegionsToInclude}
+            onChange={({ target }) => setLettersOfRegionsToInclude(target.value)}
+          />
+          <input type={"checkbox"} checked={includeInternalLinks} onChange={handleCheckBoxChange} />
+          <label>Afficher les liens intra-régionaux</label>
+          {"   "}
+          <label>Nombre minimum de dates pour afficher le lien</label>
+          <input type="text" id="minimumNumberOfDates"
+            size={5}
+            value={minimumNumberOfDatesToKeepLink}
+            onChange={({ target }) => setMinimumNumberOfDatesToKeepLink(target.value)}
+          />
+          <button onClick={() => outputDependencyData()}>Actualiser le graphique</button>
+
+
+          <Mermaid chart={generalMermaidString} name="general" config={{}} />
           <CscDataGrid
             cscByCscKey={cscByCscKey}
             schedulingUnitDatesByCscKey={schedulingUnitDatesByCscKey}
@@ -145,12 +186,15 @@ export function Index() {
         </div>
       ) : (
         <FilesPicker handleData={handleRawCscData} text={`Habillages: glissez et déposez des fichiers ici, ou cliquez pour sélectionner des fichiers`} />
-      )}
-      {schedulingUnitDatesByCscKey ? (
-        null
-      ) : (
-        <FilesPicker handleData={handleCalData} text={`Calendriers: glissez et déposez des fichiers ici, ou cliquez pour sélectionner des fichiers`} />
-      )}
+      )
+      }
+      {
+        schedulingUnitDatesByCscKey ? (
+          null
+        ) : (
+          <FilesPicker handleData={handleCalData} text={`Calendriers: glissez et déposez des fichiers ici, ou cliquez pour sélectionner des fichiers`} />
+        )
+      }
 
       <div>
         Date avant laquelle les habillages sont considérés comme "vieux":
@@ -168,6 +212,7 @@ export function Index() {
       <div>
         <p>Notes de mise à jour</p>
         <ul>
+          <li>v1.15.0 - 15/05/2023 - Ajout de fonctionnalités pour voir les liens entre unités horaires</li>
           <li>v1.14.0 - 28/04/2023 - Ajout de fonctionnalités liées aux liens d'adjacences "sortants"</li>
           <li>v1.13.0 - 05/04/2023 - Ajout de liens de téléchargement vers des exemples d'OIG/OIR</li>
           <li>v1.12.0 - 05/04/2023 - Certains paramètres de calcul des statistiques sont à la main des utilisateurs</li>

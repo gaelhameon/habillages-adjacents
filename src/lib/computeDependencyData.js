@@ -1,6 +1,6 @@
 import Parser from "./control-file-and-csv-data-parser";
 import getAndSetIfRequired from "./getAndSetIfRequired";
-import { get } from "lodash";
+import { get, countBy } from "lodash";
 
 export async function computeDependencyData(cscByCscKey, schedulingUnitDatesByCscKey) {
 
@@ -56,7 +56,12 @@ export async function computeDependencyData(cscByCscKey, schedulingUnitDatesByCs
 
   console.log({ dependencyDataBySchedulingUnit });
 
-  return { dependencyDataBySchedulingUnit, allDates }
+  const numberOfDatesBySchedUnitsKey = countBy(allDates, ({ from, to }) => {
+    return `${from.cscSchedUnit}|${to.cscSchedUnit}`
+  });
+
+
+  return { dependencyDataBySchedulingUnit, allDates, numberOfDatesBySchedUnitsKey }
 }
 
 
@@ -86,5 +91,4 @@ export function getDependencyDataAsCsv({ allDates }) {
   })
   return [headersLine, ...dateLines].join('\n')
 }
-
 
